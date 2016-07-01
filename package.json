@@ -1,0 +1,19 @@
+{
+  "name": "node-red-contrib-morse",
+  "version": "0.0.1",
+  "description": "Morse code output node for node-red",
+  "main": "morse.js",
+  "scripts": {
+    "test": ""
+  },
+  "keywords": [
+    "node-red", "morse", "morse code"
+  ],
+  "author": "bill@bitlash.net",
+  "license": "MIT",
+  "node-red": {
+    "nodes": {
+        "morse-out": "morse.js"
+    }
+  }
+}

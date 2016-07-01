@@ -1,0 +1,68 @@
+<!-- morse output node ui -->
+<script type="text/x-red" data-template-name="morse-out">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-wpm"><i class="fa fa-tag"></i> WPM</label>
+        <input type="text" id="node-input-wpm" placeholder="10">
+    </div>
+    <div class="form-row">
+        <label for="node-input-keyon"><i class="fa fa-tag"></i> KeyOn Payload</label>
+        <input type="text" id="node-input-keyon" placeholder="keyon">
+    </div>
+    <div class="form-row">
+    <label for="node-input-keyoff"><i class="fa fa-tag"></i> KeyOff Payload</label>
+    <input type="text" id="node-input-keyoff" placeholder="keyoff">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ptton"><i class="fa fa-tag"></i> PTTOn Payload</label>
+        <input type="text" id="node-input-ptton" placeholder="ptton">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pttoff"><i class="fa fa-tag"></i> PTTOff Payload</label>
+        <input type="text" id="node-input-pttoff" placeholder="keyoff">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pttdelay"><i class="fa fa-tag"></i> PTT Delay (ms)</label>
+        <input type="text" id="node-input-pttdelay" placeholder="1000">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="morse-out">
+<p>A node which converts input text into signals required to send International Morse code.</p>
+<p>This node converts the text received in the msg.payload field of incoming messages to a series of output messages timed to signal the start (keyon) and end (keyoff) of  elements in International Morse code at the specified sending rate.  There are also optional messages which signal the beginning (ptton where ptt means push-to-talk) and end (pttoff) of a complete message to enable device push-to-talk control or its equivalent.<p>
+<p>Multiple input messages are buffered in the node and sent in the order they are received.</p>
+<p><b>Parameters</b></p>
+<p>The WPM field sets the sending speed in words per minute.  Values between 5 and 20 are reasonable; the default is 10.</p>
+<p>The KeyOn Payload field sets the msg.payload to be emitted when the virtual morse key goes down, in other words, when an element transmission begins.  Likewise, the KeyOff Payload is the msg.payload to be emitted when the key goes up and an element ends.</p>
+<p><b>Example:</b> Set keyon='0,0,red' and keyoff='0,0,black' and wire the output of the Morse node to a Raspberry Pi SenseHat input node.  Text payloads sent to the Morse node will be signaled with red flashes on LED 0,0.</p>
+<p>The PTTOn Payload specifies a payload to be sent at the beginning of a message, before any elements are sent, perhaps to bring up the output device and give it time to stabilize.  Likewise, the PTTOff Payload specifies the payload to be sent at the end of a message, perhaps to turn off the transmitter or output device.</p>
+<p>There is a configurable delay after the PTTOn message is sent before the first KeyOn message; this is specified in the PTT Delay field.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('morse-out',{
+        category: 'output',
+        color:"#c0deed",
+        defaults: {
+            name: {type: 'text', required: false},
+            wpm: {type: 'text', required: false, value: '10'},
+            keyon: {type: 'text', required: false, value: 'keyon'},
+            keyoff: {type: 'text', required: false, value: 'keyoff'},
+            ptton: {type: 'text', required: false, value: 'ptton' },
+            pttoff: {type: 'text', required: false, value: 'pttoff'},
+            pttdelay: {type: 'text', required: false, value: '1000'}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "bridge-dash.png",
+        label: function() {
+            return this.name || this.text || 'morse';
+        },
+            labelStyle: function() {
+            return this.name ? 'node_label_italic' : '';
+        }
+    });
+</script>
