@@ -12,7 +12,15 @@ module.exports = function(RED) {
 
         // send output message for keyon, keyoff, ptton, pttoff if specified
         function sendMsg(msgType) {
-            if (options[msgType]) node.send({payload: options[msgType]});
+            if (options[msgType]) {
+                var msg = node.morse.getCurrentMsg();
+                if (msg) {
+                    // clone the message object and set the payload
+                    var msgClone = Object.assign({}, msg);
+                    msgClone.payload = options[msgType];
+                    node.send(msgClone);
+                }
+            }
         }
 
         node.morse = Morse();
@@ -26,7 +34,7 @@ module.exports = function(RED) {
         });
 
         node.on('input', function(msg) {
-            node.morse.morsePut(msg.payload.toString());
+            node.morse.morsePut(msg);
         });
 
         node.on('close', function(done) {

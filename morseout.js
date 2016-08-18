@@ -76,23 +76,52 @@ module.exports = function() {
         //	Morse output buffer management
         //
         morsebuf: '',
+        msgQueue: [],
+
+        startMsg: function(pad) {
+            if (this.msgQueue.length) {
+                this.setwpm(this.msgQueue[0].wpm || DEFAULT_WPM);
+                if (this.msgQueue[0].pttdelay != undefined) this.pttdelay = parseInt(this.msgQueue[0].pttdelay);
+                else this.pttdelay = 1000;
+                this.morsebuf = this.msgQueue[0].payload.toString();
+                if (pad) this.morsebuf = ' ' + this.morsebuf;
+            }
+        },
 
     	morseAvailable: function() {
-    		return this.morsebuf.length > 0;
+    		return (this.morsebuf.length > 0) || (this.msgQueue.length > 1);
     	},
 
     	morseGet: function() {
-    		if (!this.morseAvailable()) return '?';
-    		var retchar = this.morsebuf[0];
-    		this.morsebuf = this.morsebuf.substr(1, this.morsebuf.length);
-    		return retchar;
+
+            // check for end-of-message transition
+            if (this.morsebuf.length == 0) {
+                if (this.msgQueue.length > 0) {
+                    this.msgQueue.splice(0,1);
+                    this.startMsg(true);
+                }
+                else return '?';
+            }
+
+            // fetch the next character from the buffer
+            if (this.morsebuf.length > 0) {
+                var retchar = this.morsebuf[0];
+                this.morsebuf = this.morsebuf.substr(1, this.morsebuf.length);
+                return retchar;
+            }
+            else return '?';
     	},
 
-    	morsePut: function(string) {
-            if (this.morseAvailable()) this.morsebuf += ' ';
-    		this.morsebuf += string;
-            this.text = string;     // save last input for repeat
+    	morsePut: function(msg) {
+            // save a clone of the passed-in object
+            this.msgQueue.push(Object.assign({}, msg));
+            if (this.msgQueue.length == 1) this.startMsg(false);
     	},
+
+        // return the currently-played message
+        getCurrentMsg: function() {
+            return this.msgQueue.length ? this.msgQueue[0] : undefined;
+        },
 
 
     	//////////
@@ -186,11 +215,7 @@ module.exports = function() {
     			break;
 
     		case M_END_TX:
-    			if (this.repeat) {
-    				this.morsePut(this.text);
-    				//this.repeat--;
-    			}
-                else this.pttOff();
+                this.pttOff();
                 // TODO: add tail delay before drop?
     			this.nextState(M_IDLE, 1000);
     			break;
