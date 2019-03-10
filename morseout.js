@@ -172,6 +172,7 @@ module.exports = function() {
     				break;
     			}
     			this.morse_char = this.morseGet();
+                this.startChar(this.morse_char);
 
     			if (this.morse_char == ' ') {		// wordspace
     				this.nextState(M_START_CHAR, 6 * this.morse_dit_ms);

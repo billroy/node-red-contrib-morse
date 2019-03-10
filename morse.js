@@ -18,6 +18,7 @@ module.exports = function(RED) {
                     // clone the message object and set the payload
                     var msgClone = Object.assign({}, msg);
                     msgClone.payload = options[msgType];
+                    if (msgType == 'startchar') msgClone.morse_char = node.morse.morse_char;
                     node.send(msgClone);
                 }
             }
@@ -29,6 +30,7 @@ module.exports = function(RED) {
             morseOff:   function() { sendMsg('keyoff'); },
             pttOn:      function() { sendMsg('ptton'); },
             pttOff:     function() { sendMsg('pttoff'); },
+            startChar:  function() { sendMsg('startchar'); },
             wpm:        parseInt(options.wpm) || 20,
             pttdelay:   parseInt(options.pttdelay) || 1000
         });
