@@ -22,6 +22,8 @@ The PTTOn Payload specifies a payload to be sent at the beginning of a message, 
 
 There is a configurable delay after the PTTOn message is sent before the first KeyOn message; this is specified in the PTT Delay field.
 
+A StartCharacter event is emitted at the beginning of each character.  The character being emitted is in the morse_char field of the message object.
+
 ## Example Flow
 
 Here is an example flow that pipes four separate morse flows to a SenseHat (three RSS feeds and a fixed CQ message):
