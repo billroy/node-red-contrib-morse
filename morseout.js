@@ -67,6 +67,7 @@ module.exports = function() {
     	morse_dah_ms: 0,
 
     	setwpm: function(wpm) {
+            this.wpm = wpm;
     		this.morse_dit_ms = Math.floor(1200/wpm);
     		this.morse_dah_ms = 3 * this.morse_dit_ms;
     	},
@@ -80,7 +81,7 @@ module.exports = function() {
 
         startMsg: function(pad) {
             if (this.msgQueue.length) {
-                this.setwpm(this.msgQueue[0].wpm || DEFAULT_WPM);
+                this.setwpm(this.msgQueue[0].wpm || this.wpm || DEFAULT_WPM);
                 if (this.msgQueue[0].pttdelay != undefined) this.pttdelay = parseInt(this.msgQueue[0].pttdelay);
                 else this.pttdelay = 1000;
                 this.morsebuf = this.msgQueue[0].payload.toString();
