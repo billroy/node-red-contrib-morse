@@ -184,7 +184,7 @@ module.exports = function() {
     			if ((this.morse_char >= 'a') && (this.morse_char <= 'z')) {
     				this.morse_char = String.fromCharCode(this.morse_char.charCodeAt(0) - 'a'.charCodeAt(0) + 'A'.charCodeAt(0));
     			}
-    			if ((this.morse_char < ' ') || (this.morse_char > '_')) break;    // ignore bogus 7-bit and all 8-bit
+    			if ((this.morse_char < ' ') || (this.morse_char > '_')) this.morse_char = '?';    // 'fix' bogus 7-bit and all 8-bit
 
     			// decode morse pattern from morsetab into morse_data and morse_mask
     			this.morse_data = morsetab[this.morse_char.charCodeAt(0) - ' '.charCodeAt(0)];
